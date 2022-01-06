@@ -8,43 +8,58 @@ import { useState } from 'react'
 function App() {
   // Use initialEmails for state
   const [emails, setEmails] = useState(initialEmails)
- 
+  const [showRead, setShowRead] = useState (false)
+  const [showStarredOnly, setShowStarredOnly] = useState(false)
+
+  
   function readEmail(emailID){
-    let newEmails = []
-    for( const email of initialEmails){
+    for( const email of emails){
       if(email.id === emailID){
         email.read = !email.read
       } 
-      newEmails.push(email)
     }
-    setEmails(newEmails)
+    setEmails([...emails])
   }
 
   function starEmail(emailID){
-    let newEmails = []
-    for( const email of initialEmails){
+    for( const email of emails){
       if(email.id === emailID){
         email.starred = !email.starred
       } 
-      newEmails.push(email)
     }
-    setEmails(newEmails)
+    setEmails([...emails])
   }
+
+  function showStarred() {
+    emailsToShow = emails.filter(email => email.starred)
+    setEmails(emailsToShow)
+  }
+  function showInbox(){
+    setEmails(initialEmails)
+  }
+
+  
   return (
     <div className="app">
       <Header />
       <nav className="left-menu">
         <ul className="inbox-list">
           <li
-            className="item active"
-            // onClick={() => {}}
+            className={showStarredOnly?  "item" : "item active"}
+            onClick={() => {
+              showInbox()
+              setShowStarredOnly(false)
+            }}
           >
             <span className="label">Inbox</span>
             <span className="count">?</span>
           </li>
           <li
-            className="item"
-            // onClick={() => {}}
+            className={showStarredOnly?  "item active" : "item"}
+            onClick={() => {
+              showStarred()
+              setShowStarredOnly(true)
+            }}
           >
             <span className="label">Starred</span>
             <span className="count">?</span>
@@ -55,8 +70,10 @@ function App() {
             <input
               id="hide-read"
               type="checkbox"
-              checked={false}
-              // onChange={() => {}}
+              checked={showRead}
+              onChange={() => {
+                setShowRead(!showRead)
+              }}
             />
           </li>
         </ul>

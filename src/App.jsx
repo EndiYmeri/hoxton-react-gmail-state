@@ -9,9 +9,16 @@ function App() {
   // Use initialEmails for state
   const [emails, setEmails] = useState(initialEmails)
   const [showRead, setShowRead] = useState (false)
-  const [showStarredOnly, setShowStarredOnly] = useState(false)
+  const [currentTab, setCurrentTab] = useState('inbox')
 
-  
+  function showStarred(myEmails) {
+    let emailsToShow = myEmails.filter(email => email.starred)
+    return emailsToShow
+  }
+  function showInbox(){
+    setEmails(initialEmails)
+  }
+
   function readEmail(emailID){
     for( const email of emails){
       if(email.id === emailID){
@@ -30,35 +37,25 @@ function App() {
     setEmails([...emails])
   }
 
-  function showStarred() {
-    emailsToShow = emails.filter(email => email.starred)
-    setEmails(emailsToShow)
-  }
-  function showInbox(){
-    setEmails(initialEmails)
-  }
 
-  
   return (
     <div className="app">
       <Header />
       <nav className="left-menu">
         <ul className="inbox-list">
           <li
-            className={showStarredOnly?  "item" : "item active"}
+            className={currentTab === 'inbox' ? "item active" : "item"}
             onClick={() => {
-              showInbox()
-              setShowStarredOnly(false)
+              setCurrentTab('inbox')
             }}
           >
             <span className="label">Inbox</span>
             <span className="count">?</span>
           </li>
           <li
-            className={showStarredOnly?  "item active" : "item"}
+            className={currentTab === 'starred' ? "item active" : "item"}
             onClick={() => {
-              showStarred()
-              setShowStarredOnly(true)
+              setCurrentTab('starred')
             }}
           >
             <span className="label">Starred</span>

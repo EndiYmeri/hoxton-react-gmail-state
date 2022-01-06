@@ -7,16 +7,34 @@ import { useState } from 'react'
 
 function App() {
   // Use initialEmails for state
-  const [emails, setEmails] = useState(initialEmails)
-  const [showRead, setShowRead] = useState (false)
-  const [currentTab, setCurrentTab] = useState('inbox')
+  let [emails, setEmails] = useState(initialEmails)
+  let [currentTab, setCurrentTab] = useState('inbox')
+  let [readShown, setReadShown] = useState (false)
 
-  function showStarred(myEmails) {
-    let emailsToShow = myEmails.filter(email => email.starred)
-    return emailsToShow
+  function showStarred() {
+    setReadShown(false)
+    emails = emails.filter(email => email.starred)
+    setEmails([...emails])
   }
   function showInbox(){
+    setReadShown(false)
     setEmails(initialEmails)
+  }
+
+  function inboxCounter(){
+    let count = 0
+    for(const email of initialEmails){
+      count++
+    }
+    return count
+  }
+  function starredCounter(){
+    let count = 0
+  
+    for(const email of initialEmails){
+      if(email.starred) count++  
+    }
+    return count
   }
 
   function readEmail(emailID){
@@ -32,9 +50,17 @@ function App() {
     for( const email of emails){
       if(email.id === emailID){
         email.starred = !email.starred
+        setEmails([...emails])
+        if(currentTab === 'starred'){
+          showStarred()
+        }
       } 
     }
-    setEmails([...emails])
+  }
+
+  function showRead(){
+    let showReadEmails = emails.filter(email => email.read)
+    setEmails(showReadEmails)
   }
 
 
@@ -46,20 +72,22 @@ function App() {
           <li
             className={currentTab === 'inbox' ? "item active" : "item"}
             onClick={() => {
+              showInbox()
               setCurrentTab('inbox')
             }}
           >
             <span className="label">Inbox</span>
-            <span className="count">?</span>
+            <span className="count">{inboxCounter()}</span>
           </li>
           <li
             className={currentTab === 'starred' ? "item active" : "item"}
             onClick={() => {
+              showStarred()
               setCurrentTab('starred')
             }}
           >
             <span className="label">Starred</span>
-            <span className="count">?</span>
+            <span className="count">{starredCounter()}</span>
           </li>
 
           <li className="item toggle">
@@ -67,9 +95,10 @@ function App() {
             <input
               id="hide-read"
               type="checkbox"
-              checked={showRead}
+              checked={readShown}
               onChange={() => {
-                setShowRead(!showRead)
+                setReadShown(!readShown)
+                showRead()
               }}
             />
           </li>
